@@ -40,7 +40,8 @@ ALTER TABLE text
   CHANGE old_id old_id INTEGER UNSIGNED;
 HERE
 
-for FILE in xaa xab xac xad xae xaf xag xah xai xaj xak
+# xa* files are result of split -l
+for FILE in xa*
 do
 	echo "Start processing file $FILE"
 	cat $FILE | mysql -u $USER $DB --password=$PASS
