@@ -47,3 +47,15 @@ do
 	cat $FILE | mysql -u $USER $DB --password=$PASS
 	echo "Finised processing file $FILE"
 done
+
+# wget http://dumps.wikimedia.org/enwiki/20130805/enwiki-20130805-iwlinks.sql.gz
+# gunzip enwiki-20130805-iwlinks.sql.gz
+# cat enwiki-20130805-iwlinks.sql | mysql -u $USER $DB --password=$PASS
+
+# wget http://dumps.wikimedia.org/enwiki/20130805/enwiki-20130805-category.sql.gz
+# gunzip enwiki-20130805-category.sql.gz
+# cat enwiki-20130805-category.sql | mysql -u $USER $DB --password=$PASS
+
+# wget http://dumps.wikimedia.org/enwiki/20130805/enwiki-20130805-categorylinks.sql.gz
+# gunzip enwiki-20130805-categorylinks.sql.gz
+# cat enwiki-20130805-categorylinks.sql | mysql -u $USER $DB --password=$PASS
