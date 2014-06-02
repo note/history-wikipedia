@@ -2,12 +2,6 @@
 
 from wikipedia_models import *
 
-'''rev = Revision.get(Revision.rev_page == 12)
-
-rev_text_id = rev.rev_text
-
-text = Text.get(Text.old == rev_text_id)'''
-
 # saves direct children of given category to WW2Article table
 def getAndSaveChildren(categoryName):
 	linksQuery = Categorylinks.select().where(Categorylinks.cl_to == categoryName)
