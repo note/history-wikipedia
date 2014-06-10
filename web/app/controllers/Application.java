@@ -40,8 +40,6 @@ public class Application extends Controller {
         pc.newProject();
         Workspace workspace = pc.getCurrentWorkspace();
 
-        workspace.get
-
         //Get controllers and models
         ImportController importController = Lookup.getDefault().lookup(ImportController.class);
         GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getModel();
