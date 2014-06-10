@@ -1,6 +1,8 @@
 package controllers;
 
+import com.sun.javafx.geom.transform.BaseTransform;
 import org.gephi.graph.api.*;
+import org.gephi.statistics.plugin.Degree;
 import play.*;
 import play.mvc.*;
 
@@ -32,11 +34,13 @@ public class Application extends Controller {
         return ok(index.render("Your new application is ready."));
     }
 
-    public static Result gephi() {
+    public static DirectedGraph getSimpleGraph() {
         // Init a project - and therefore a workspace
         ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
         pc.newProject();
         Workspace workspace = pc.getCurrentWorkspace();
+
+        workspace.get
 
         //Get controllers and models
         ImportController importController = Lookup.getDefault().lookup(ImportController.class);
@@ -61,8 +65,17 @@ public class Application extends Controller {
         //Append imported data to GraphAPI
         importController.process(container, new DefaultProcessor(), workspace);
 
-        DirectedGraph graph = graphModel.getDirectedGraph();
-        return ok("<p>Nodes: " + graph.getNodeCount() + "</p><p>" + "Edges: " + graph.getEdgeCount() + "</p>");
+        return graphModel.getDirectedGraph();
+    }
+
+    public static Result gephi(){
+        DirectedGraph graph = getSimpleGraph();
+        final AttributeModel attributeModel = Lookup.getDefault().lookup(AttributeController.class).getModel();
+        final Degree degree = new Degree();
+        degree.execute(graph.getGraphModel(), attributeModel);
+        degree.getReport();
+        System.out.println(degree.getReport());
+        return ok(stats.render(degree.getReport()));
     }
 
 }

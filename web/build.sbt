@@ -10,8 +10,7 @@ libraryDependencies ++= Seq(
   javaJdbc,
   javaEbean,
   cache,
-  javaWs,
-  "org.gephi" % "gephi-toolkit" % "0.9-SNAPSHOT"
+  javaWs
 )
 
 resolvers += "Gephi Snapshots" at "http://nexus.gephi.org/nexus/content/repositories/snapshots/"
