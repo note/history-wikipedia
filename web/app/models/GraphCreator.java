@@ -22,8 +22,20 @@ import org.gephi.io.processor.plugin.DefaultProcessor;
 import org.gephi.project.api.ProjectController;
 import org.gephi.project.api.Workspace;
 import org.gephi.statistics.plugin.*;
+import org.gephi.preview.api.*;
 import org.gephi.statistics.spi.Statistics;
 import org.openide.util.Lookup;
+import org.gephi.io.exporter.preview.PNGExporter;
+import org.gephi.io.exporter.api.ExportController;
+import java.io.FileOutputStream;
+import org.gephi.layout.plugin.fruchterman.FruchtermanReingold;
+import org.gephi.preview.api.PreviewProperty;
+import org.gephi.ranking.api.Ranking;
+import org.gephi.ranking.api.RankingController;
+import org.gephi.ranking.api.Transformer;
+import org.gephi.ranking.plugin.transformer.AbstractColorTransformer;
+import org.gephi.ranking.plugin.transformer.AbstractSizeTransformer;
+import java.awt.Color;
 
 public class GraphCreator implements Runnable {
     Long id;
@@ -83,12 +95,14 @@ public class GraphCreator implements Runnable {
     }
 
     ProjectController pc;
+    GraphModel graphModel;
 
     void createGephiProject() {
         // Init a project - and therefore a workspace
         pc = Lookup.getDefault().lookup(ProjectController.class);
         pc.newProject();
         Workspace workspace = pc.getCurrentWorkspace();
+
 
         //Get controllers and models
         ImportController importController = Lookup.getDefault().lookup(ImportController.class);
@@ -110,13 +124,48 @@ public class GraphCreator implements Runnable {
 
         //Append imported data to GraphAPI
         importController.process(container, new DefaultProcessor(), workspace);
+
+        FruchtermanReingold layout = new FruchtermanReingold(null);
+        graphModel = Lookup.getDefault().lookup(GraphController.class).getModel();
+        layout.setGraphModel(graphModel);
+
+        layout.initAlgo();
+        layout.resetPropertiesValues();
+
+        for (int i = 0; i < 10000 && layout.canAlgo(); i++) {
+            layout.goAlgo();
+        }
+        layout.endAlgo();
+
+        PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
+        PreviewProperties properties = previewController.getModel().getProperties();
+
+        properties.getProperty(PreviewProperty.SHOW_NODE_LABELS).setValue(true);
+
+        RankingController rankingController = Lookup.getDefault().lookup(RankingController.class);
+        Ranking degreeRanking = rankingController.getModel().getRanking(Ranking.NODE_ELEMENT, Ranking.DEGREE_RANKING);
+        AbstractColorTransformer colorTransformer = (AbstractColorTransformer) rankingController.getModel().getTransformer(Ranking.NODE_ELEMENT, Transformer.RENDERABLE_COLOR);
+        colorTransformer.setColors(new Color[]{new Color(0xFEF0D9), new Color(0xB30000)});
+        rankingController.transform(degreeRanking, colorTransformer);
     }
+
 
     void saveProjectFiles(){
         pc.saveProject(pc.getCurrentProject(), new File(Play.application().path() + "/public/reports/report" + id + ".gephi")).run();
 
-        GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getModel();
+
         job.report = (new ReportGenerator(graphModel.getDirectedGraph(), id)).basicStatistics();
+
+        ExportController ec = Lookup.getDefault().lookup(ExportController.class);
+        PNGExporter pngExporter = (PNGExporter) ec.getExporter("png");
+
+        try {
+            FileOutputStream stream = new FileOutputStream(Play.application().path() + "/public/images/graph_" + id + ".png");
+            ec.exportStream(stream, pngExporter);
+            stream.close();
+        } catch (Exception e){
+            System.out.println(e.toString());
+        }
 
     }
 
