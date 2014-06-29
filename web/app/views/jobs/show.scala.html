@@ -1,0 +1,12 @@
+@import models.BackgroundJob
+@(job: BackgroundJob)
+
+@main(title = "Job Status") {
+
+<h1>Status @(job.category)</h1>
+   @if(job.finished){
+      <p>Finished!</p>
+   } else {
+      <p>In progress...</p>
+   }
+}
