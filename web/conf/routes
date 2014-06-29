@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index()
+GET     /                           controllers.JobsController.form()
 GET     /stats/:id                      controllers.StatisticsController.basicStatistics(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path

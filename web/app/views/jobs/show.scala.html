@@ -3,9 +3,13 @@
 
 @main(title = "Job Status") {
 
-<h1>Status @(job.category)</h1>
+<h1>Category: @(job.category)</h1>
    @if(job.finished){
-      <p>Finished!</p>
+      <p>
+          <a href="/stats/@(job.id)">Stats</a>
+          |
+          <a href="/assets/reports/report@(job.id).gephi">Gephi file</a>
+      </p>
    } else {
       <p>In progress...</p>
    }

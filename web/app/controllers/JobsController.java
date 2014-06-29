@@ -24,7 +24,8 @@ import models.GraphCreator;
 
 public class JobsController extends Controller {
     public static Result form() {
-        return ok(form.render());
+        List<BackgroundJob> allJobs = Ebean.find(BackgroundJob.class).findList();
+        return ok(form.render(allJobs));
     }
 
 
@@ -45,6 +46,7 @@ public class JobsController extends Controller {
     }
 
     public static Result show(Long id){
+
         BackgroundJob job =  Ebean.find(BackgroundJob.class, id);
 
         return ok(show.render(job));

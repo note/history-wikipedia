@@ -1,11 +1,22 @@
+@import models.BackgroundJob
+@import java.util.List
+@(jobs: List[BackgroundJob])
+
 @main(title = "Job form") {
 
-<h1>Stwórz pracę</h1>
-<form method="post" action="/jobs">
-    <label>Nazwa kategorii
-        <input type="text" name="category" />
-    </label>
-    <input type="submit" value="Wyślij" />
-</form>
+    <h1>Create job</h1>
+    <form method="post" action="/jobs">
+        <label>Category
+            <input type="text" name="category" />
+        </label>
+        <input type="submit" value="Wyślij" />
+    </form>
+
+    <div>
+      <h1>Previous jobs</h1>
+        @for(job <- jobs) {
+        <p><a href="/jobs/@(job.id)">@(job.category)</a></p>
+        }
+    </div>
 
 }
